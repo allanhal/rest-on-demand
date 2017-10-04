@@ -67,7 +67,15 @@ collections.forEach(function (collection) {
 
   // Atualizar Pedido
   app.put(apiUrl + '/:id', function (req, res) {
-    res.json("Not implemented / DELETE then INSERT");
+
+    var query = { "_id": ObjectId(req.params.id) };
+    db.collection(collection).deleteOne(query, function (err, obj) {
+      var pedido = req.body;
+      db.collection(collection).insert(pedido);
+      res.json(pedido);
+    });
+
+
   });
 
   // Deletar Pedido
