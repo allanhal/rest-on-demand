@@ -35,7 +35,7 @@ MongoClient.connect('mongodb://user:user@ds123124.mlab.com:23124/easy-rest', fun
   });
 });
 
-var collections = ['pedido', 'produto', 'cavalinho', 'abcd'];
+var collections = ['pedido', 'produto'];
 collections.forEach(function (collection) {
   /* ================================================================== */
   /* ======================= API REST / PEDIDO ======================== */
@@ -59,7 +59,8 @@ collections.forEach(function (collection) {
 
   // Ler Pedido
   app.get(apiUrl + '/:id', function (req, res) {
-    db.collection(collection).findOne({}, function (err, result) {
+    var query = { "_id": ObjectId(req.params.id) };
+    db.collection(collection).findOne(query, function (err, result) {
       res.json(result);
     });
   });
