@@ -69,12 +69,14 @@ collections.forEach(function (collection) {
   app.put(apiUrl + '/:id', function (req, res) {
 
     var query = { "_id": ObjectId(req.params.id) };
-    db.collection(collection).deleteOne(query, function (err, obj) {
-      var pedido = req.body;
-      db.collection(collection).insert(pedido);
-      res.json(pedido);
-    });
-
+    var pedido = req.body;
+    db.checkin_4e95ae0926abe9ad28000001.update(
+      query,
+      {
+        $set: pedido
+      }
+    );
+    res.json(pedido);
 
   });
 
