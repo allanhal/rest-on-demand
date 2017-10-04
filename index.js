@@ -67,17 +67,15 @@ collections.forEach(function (collection) {
 
   // Atualizar Pedido
   app.put(apiUrl + '/:id', function (req, res) {
-
     var query = { "_id": ObjectId(req.params.id) };
     var pedido = req.body;
-    db.checkin_4e95ae0926abe9ad28000001.update(
+    db.collection.update(
       query,
       {
         $set: pedido
       }
     );
     res.json(pedido);
-
   });
 
   // Deletar Pedido
