@@ -68,13 +68,14 @@ collections.forEach(function (collection) {
   // Atualizar Pedido
   app.put(apiUrl + '/:id', function (req, res) {
     var query = { "_id": ObjectId(req.params.id) };
+    req.body._id = ObjectId(req.params.id);
     var pedido = req.body;
-    db.collection.update(
-      query,
+
+    db.collection(collection).update(query, req.body,
       {
-        $set: pedido
-      },
-      {}
+        "multi": false,  // update only one document 
+        "upsert": false  // insert a new document, if no existing document match the query 
+      }
     );
     res.json(pedido);
   });
