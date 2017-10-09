@@ -9,6 +9,8 @@ var apiUrl;
 
 var db; // mongoDatabase
 
+var collections = ['pedido', 'produto'];
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname));
@@ -31,6 +33,21 @@ MongoClient.connect('mongodb://user:user@ds123124.mlab.com:23124/easy-rest', fun
   }
   db = database;
   app.listen(app.get('port'), function () {
+    var teste = db.listCollections().toArray(function (err, collInfos) {
+      // collInfos is an array of collection info objects that look like:
+      // { name: 'test', options: {} }
+
+      var colls = [];
+      for (var key in collInfos) {
+        if (collInfos.hasOwnProperty(key)) {
+          var element = collInfos[key];
+          console.log(element.name)
+          colls.push(element.name)
+        }
+      }
+      collections = colls;
+      createApiUrls()
+    });
     console.log('Node app is running on port => ', app.get('port'));
   });
 });
@@ -41,59 +58,63 @@ MongoClient.connect('mongodb://user:user@ds123124.mlab.com:23124/easy-rest', fun
 app.get('/create/:id', function (req, res) {
   var collectionToCreate = req.params.id
   db.createCollection(collectionToCreate, null);
-  res.json("Collection "+collectionToCreate + " created!");
+  res.json("Collection " + collectionToCreate + " created!");
 });
 
-var collections = ['pedido', 'produto'];
-collections.forEach(function (collection) {
-  /* ================================================================== */
-  /* =========================== API REST ============================= */
-  /* ================================================================== */
 
-  apiUrl = '/api/' + collection;
-
-  // Adicionar Pedido
-  app.post(apiUrl, function (req, res) {
-    var pedido = req.body;
-    db.collection(collection).insert(pedido);
-    res.json(pedido);
-  });
-
-  // Listar Pedidos
-  app.get(apiUrl, function (req, res) {
-    db.collection(collection).find().toArray(function (err, results) {
-      res.json(results);
+function createApiUrls(params) {
+  collections.forEach(function (collection) {
+    /* ================================================================== */
+    /* =========================== API REST ============================= */
+    /* ================================================================== */
+    
+    apiUrl = '/api/' + collection;
+    
+    // Adicionar Pedido
+    app.post(apiUrl, function (req, res) {
+      var pedido = req.body;
+      db.collection(collection).insert(pedido);
+      res.json(pedido);
     });
-  });
-
-  // Ler Pedido
-  app.get(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    db.collection(collection).findOne(query, function (err, result) {
-      res.json(result);
+    
+    // Listar Pedidos
+    app.get(apiUrl, function (req, res) {
+      db.collection(collection).find().toArray(function (err, results) {
+        res.json(results);
+      });
     });
-  });
-
-  // Atualizar Pedido
-  app.put(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    req.body._id = ObjectId(req.params.id);
-    var pedido = req.body;
-
-    db.collection(collection).update(query, req.body,
-      {
-        "multi": false,  // update only one document 
-        "upsert": false  // insert a new document, if no existing document match the query 
-      }
-    );
-    res.json(pedido);
-  });
-
-  // Deletar Pedido
-  app.delete(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    db.collection(collection).deleteOne(query, function (err, obj) {
-      res.json(req.params.id);
+    
+    // Ler Pedido
+    app.get(apiUrl + '/:id', function (req, res) {
+      var query = { "_id": ObjectId(req.params.id) };
+      db.collection(collection).findOne(query, function (err, result) {
+        res.json(result);
+      });
     });
-  });
-}, this);
+    
+    // Atualizar Pedido
+    app.put(apiUrl + '/:id', function (req, res) {
+      var query = { "_id": ObjectId(req.params.id) };
+      req.body._id = ObjectId(req.params.id);
+      var pedido = req.body;
+      
+      db.collection(collection).update(query, req.body,
+        {
+          "multi": false,  // update only one document 
+          "upsert": false  // insert a new document, if no existing document match the query 
+        }
+      );
+      res.json(pedido);
+    });
+    
+    // Deletar Pedido
+    app.delete(apiUrl + '/:id', function (req, res) {
+      var query = { "_id": ObjectId(req.params.id) };
+      db.collection(collection).deleteOne(query, function (err, obj) {
+        res.json(req.params.id);
+      });
+    });
+  }, this);
+}
+
+createApiUrls()
