@@ -1,13 +1,15 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectID;
-var path = require('path');
+const path = require('path');
+
+const app = express();
 
 var apiUrl;
 
 var db; // mongoDatabase
+var dbUrl = 'mongodb://user:user@ds123124.mlab.com:23124/easy-rest';
 
 var collections = ['pedido', 'produto'];
 
@@ -27,14 +29,17 @@ app.use(function (req, res, next) {
 
 app.use('/', express.static('public'));
 
-MongoClient.connect('mongodb://user:user@ds123124.mlab.com:23124/easy-rest', function (err, database) {
+MongoClient.connect(dbUrl, function (err, database) {
   if (err) {
     return console.log(err);
   }
   db = database;
   app.listen(app.get('port'), function () {
     loadAllCollections();
-    console.log('Node app is running on port => ', app.get('port'));
+    console.log('');
+    console.log('Node app is running on port:');
+    console.log(app.get('port'));
+    console.log('');
   });
 });
 
@@ -53,6 +58,9 @@ app.get('/create/:id', function (req, res) {
 function loadAllCollections() {
   db.listCollections().toArray(function (err, collInfos) {
     var colls = [];
+
+    console.log('');
+    console.log('Database collections:');
     for (var key in collInfos) {
       if (collInfos.hasOwnProperty(key)) {
         var element = collInfos[key];
@@ -60,12 +68,13 @@ function loadAllCollections() {
         colls.push(element.name)
       }
     }
+    console.log('');
     collections = colls;
     createApiUrls()
   });
 }
 
-function createApiUrls(params) {
+function createApiUrls() {
   collections.forEach(function (collection) {
     /* ================================================================== */
     /* =========================== API REST ============================= */
@@ -121,3 +130,6 @@ function createApiUrls(params) {
 }
 
 createApiUrls()
+
+var database = require('./server/js/database');
+database.start();
