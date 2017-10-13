@@ -131,5 +131,5 @@ function createApiUrls() {
 
 createApiUrls()
 
-var database = require('./server/js/database');
-// database.start();
+var database = require('./server/ts/database.ts');
+database.start();
