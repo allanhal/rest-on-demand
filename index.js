@@ -60,7 +60,7 @@ function loadAllCollections() {
     var colls = [];
 
     console.log('');
-    console.log('Database collections:');
+    console.log('All MongoDB collections:');
     for (var key in collInfos) {
       if (collInfos.hasOwnProperty(key)) {
         var element = collInfos[key];
@@ -132,4 +132,4 @@ function createApiUrls() {
 createApiUrls()
 
 var database = require('./server/js/database');
-database.start();
+// database.start();
