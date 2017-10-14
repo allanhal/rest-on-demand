@@ -18,7 +18,7 @@ app.set('port', (process.env.PORT || 5000));
 
 app.use(compression())
 
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'dist')))
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
   extended: true
