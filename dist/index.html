@@ -7,16 +7,9 @@
 </head>
 
 <body>
-    <!-- <p><input ng-model="name" type="text" placeholder="Nome"> {{name}}</p>
-        <p><input ng-model="idade" type="text" placeholder="Idade"> {{idade}}</p>
-        <p><input ng-model="nascimento" type="text" placeholder="Nascimento"> {{nascimento}}</p> -->
     <div class="container">
         <h1 class="py-4 display-3 text-center">AngularJS Accessing via Rest</h1>
         <aping aping-jsonloader="[{ 'path': '/api/pedido'}]">
-            <!-- 
-                    <p>Result: {{results}}</p>
-                    <p>Json: {{json}}</p> 
-                -->
             <div ng-repeat="pedido in results">
                 <div style="border: solid 1px;">
                     <div class="row">
