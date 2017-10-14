@@ -1,7 +1,7 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.2.6",
-  "description": "A sample Node.js app using Express 4",
+  "name": "rest-on-demand",
+  "version": "1.0.0",
+  "description": "A REST server to have fun",
   "engines": {
     "node": "6.11.1"
   },
