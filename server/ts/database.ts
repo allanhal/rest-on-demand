@@ -4,12 +4,12 @@ var knex;
 
 this.start = function () {
     this.connectDatabase()
-    this.createTables()
+    this.createTables('pedido')
     /*
     exports.insertQuery('pedido', {
-        nome: "Cliente 1",
-        telefone: "88-99999-88888",
-        email: "email@email.com",
+        nome: "Cliente 3",
+        telefone: "Cliente 3",
+        email: "Cliente 3",
         tipo: "RodaLivre",
         tamanho: "Catalina46",
         quadro: "Branco",
@@ -24,7 +24,7 @@ this.start = function () {
     // exports.selectQuery('pedido');
 }
 
-this.connectDatabase = function (params) {
+this.connectDatabase = function () {
     knex = require('knex')({
         client: 'pg',
         connection: {
@@ -38,9 +38,9 @@ this.connectDatabase = function (params) {
     });
 }
 
-this.createTables = function () {
-    knex.schema.createTableIfNotExists('pedido', function (table) {
-        table.increments();
+this.createTables = function (table) {
+    knex.schema.createTableIfNotExists(table, function (table) {
+        table.increments('_id').primary();
         table.string('nome');
         table.string('telefone');
         table.string('email');
