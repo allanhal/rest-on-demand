@@ -74,7 +74,7 @@ this.selectAll = function (table, onResult) {
 }
 
 this.selectQuery = function (table, id, onResult) {
-    knex(table).where('id', id).then(function (result) {
+    knex(table).where('_id', id).then(function (result) {
         onResult(result);
     });
 }
@@ -83,7 +83,7 @@ this.update = function (table, pedido, onResult) {
     var id = pedido.id;
 
     knex(table)
-        .where('id', id)
+        .where('_id', id)
         .update(pedido)
         .then(function (result) {
             onResult(result);
@@ -92,7 +92,7 @@ this.update = function (table, pedido, onResult) {
 
 this.delete = function (table, id, onResult) {
     knex(table)
-        .where('id', id)
+        .where('_id', id)
         .del()
         .then(function (result) {
             onResult(result);
