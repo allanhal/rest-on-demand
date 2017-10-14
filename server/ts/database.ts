@@ -1,5 +1,5 @@
-const { Client } = require('pg')
-var client;
+// const { Client } = require('pg')
+// var client;
 var knex;
 
 this.start = function () {

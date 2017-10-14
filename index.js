@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectID;
 const path = require('path');
+var compression = require('compression')
 
 const app = express();
 
@@ -14,6 +15,8 @@ var dbUrl = 'mongodb://user:user@ds123124.mlab.com:23124/easy-rest';
 var collections = ['pedido', 'produto'];
 
 app.set('port', (process.env.PORT || 5000));
+
+app.use(compression())
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json()); // to support JSON-encoded bodies
