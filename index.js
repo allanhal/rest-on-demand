@@ -70,66 +70,71 @@ function loadAllCollections() {
     }
     console.log('');
     collections = colls;
-    createApiUrls()
+    createApiMongoForAllCollections()
   });
 }
 
-function createApiUrls() {
+function createApiMongoForAllCollections() {
   collections.forEach(function (collection) {
-    /* ================================================================== */
-    /* =========================== API REST ============================= */
-    /* ================================================================== */
-
-    apiUrl = '/api/' + collection;
-
-    // Adicionar Pedido
-    app.post(apiUrl, function (req, res) {
-      var pedido = req.body;
-      db.collection(collection).insert(pedido);
-      res.json(pedido);
-    });
-
-    // Listar Pedidos
-    app.get(apiUrl, function (req, res) {
-      db.collection(collection).find().toArray(function (err, results) {
-        res.json(results);
-      });
-    });
-
-    // Ler Pedido
-    app.get(apiUrl + '/:id', function (req, res) {
-      var query = { "_id": ObjectId(req.params.id) };
-      db.collection(collection).findOne(query, function (err, result) {
-        res.json(result);
-      });
-    });
-
-    // Atualizar Pedido
-    app.put(apiUrl + '/:id', function (req, res) {
-      var query = { "_id": ObjectId(req.params.id) };
-      req.body._id = ObjectId(req.params.id);
-      var pedido = req.body;
-
-      db.collection(collection).update(query, req.body,
-        {
-          "multi": false,  // update only one document 
-          "upsert": false  // insert a new document, if no existing document match the query 
-        }
-      );
-      res.json(pedido);
-    });
-
-    // Deletar Pedido
-    app.delete(apiUrl + '/:id', function (req, res) {
-      var query = { "_id": ObjectId(req.params.id) };
-      db.collection(collection).deleteOne(query, function (err, obj) {
-        res.json(req.params.id);
-      });
-    });
+    createApiMongo(collection)
   }, this);
 }
 
-function createSqlUrls() {
+function createApiMongo(collection) {
+  /* ================================================================== */
+  /* =========================== API REST ============================= */
+  /* ================================================================== */
+
+  apiUrl = '/api/' + collection;
+
+  // Adicionar Pedido
+  app.post(apiUrl, function (req, res) {
+    var pedido = req.body;
+    db.collection(collection).insert(pedido);
+    res.json(pedido);
+  });
+
+  // Listar Pedidos
+  app.get(apiUrl, function (req, res) {
+    db.collection(collection).find().toArray(function (err, results) {
+      res.json(results);
+    });
+  });
+
+  // Ler Pedido
+  app.get(apiUrl + '/:id', function (req, res) {
+    var query = { "_id": ObjectId(req.params.id) };
+    db.collection(collection).findOne(query, function (err, result) {
+      res.json(result);
+    });
+  });
+
+  // Atualizar Pedido
+  app.put(apiUrl + '/:id', function (req, res) {
+    var query = { "_id": ObjectId(req.params.id) };
+    req.body._id = ObjectId(req.params.id);
+    var pedido = req.body;
+
+    db.collection(collection).update(query, req.body,
+      {
+        "multi": false,  // update only one document 
+        "upsert": false  // insert a new document, if no existing document match the query 
+      }
+    );
+    res.json(pedido);
+  });
+
+  // Deletar Pedido
+  app.delete(apiUrl + '/:id', function (req, res) {
+    var query = { "_id": ObjectId(req.params.id) };
+    db.collection(collection).deleteOne(query, function (err, obj) {
+      res.json(req.params.id);
+    });
+  });
+
+}
+
+function createApiSql() {
   /* ================================================================== */
   /* =========================== API REST ============================= */
   /* ================================================================== */
@@ -183,5 +188,5 @@ function createSqlUrls() {
 var database = require('./server/ts/database.ts');
 database.start();
 
-createApiUrls()
-createSqlUrls()
+createApiMongoForAllCollections()
+createApiSql()
