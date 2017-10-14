@@ -1,5 +1,3 @@
-// const { Client } = require('pg')
-// var client;
 var knex;
 
 this.start = function () {
@@ -52,8 +50,6 @@ this.connectDatabase = function () {
 }
 
 this.createTables = function (table) {
-    var allan = 'allan'
-    var allan2 = 'allan'
     knex.schema.createTableIfNotExists(table, function (table) {
         table.increments('_id').primary();
         table.string('nome');

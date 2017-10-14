@@ -20,19 +20,16 @@
     "@types/pathjs": "^0.8.33",
     "body-parser": "^1.18.0",
     "compression": "^1.7.1",
-    "ejs": "2.5.6",
     "express": "^4.15.4",
     "knex": "^0.13.0",
     "mongo": "^0.1.0",
     "mongodb": "^2.2.31",
     "mssql": "^3.3.0",
     "nodemon": "^1.12.0",
-    "pg": "^7.3.0",
-    "shortid": "^2.2.8"
-  },
-  "devDependencies": {
     "request": "^2.81.0",
     "tape": "^4.7.0"
+  },
+  "devDependencies": {
   },
   "keywords": [
     "node",
