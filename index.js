@@ -188,5 +188,6 @@ function createApiSql() {
 var database = require('./server/ts/database.ts');
 database.start();
 
+
 createApiMongoForAllCollections()
 createApiSql()
