@@ -1,12 +1,10 @@
-var fs = require('fs');
-const path = require('path');
 const { Client } = require('pg')
 var client;
 var knex;
 
-exports.start = function () {
-    exports.connectDatabase()
-    exports.createTables()
+this.start = function () {
+    this.connectDatabase()
+    this.createTables()
     /*
     exports.insertQuery('pedido', {
         nome: "Cliente 1",
@@ -26,7 +24,7 @@ exports.start = function () {
     // exports.selectQuery('pedido');
 }
 
-exports.connectDatabase = function (params) {
+this.connectDatabase = function (params) {
     knex = require('knex')({
         client: 'pg',
         connection: {
@@ -40,7 +38,7 @@ exports.connectDatabase = function (params) {
     });
 }
 
-exports.createTables = function () {
+this.createTables = function () {
     knex.schema.createTableIfNotExists('pedido', function (table) {
         table.increments();
         table.string('nome');
@@ -62,21 +60,41 @@ exports.createTables = function () {
         });
 }
 
-exports.insertQuery = function (table, json) {
+this.insertQuery = function (table, json) {
     knex(table).insert(json).
         then(function (values) {
             console.log(values);
         });
 }
 
-// exports.selectQuery = function (table) {
-//     knex.select("*").from(table).then(function (values) {
-//         console.log(values);
-//     });
-// }
-
-exports.selectQuery = function (table, onResult) {
-    knex.select("*").from(table).then(function (result) {
+this.selectAll = function (table, onResult) {
+    knex(table).then(function (result) {
         onResult(result);
     });
+}
+
+this.selectQuery = function (table, id, onResult) {
+    knex(table).where('id', id).then(function (result) {
+        onResult(result);
+    });
+}
+
+this.update = function (table, pedido, onResult) {
+    var id = pedido.id;
+
+    knex(table)
+        .where('id', id)
+        .update(pedido)
+        .then(function (result) {
+            onResult(result);
+        });
+}
+
+this.delete = function (table, id, onResult) {
+    knex(table)
+        .where('id', id)
+        .del()
+        .then(function (result) {
+            onResult(result);
+        });
 }

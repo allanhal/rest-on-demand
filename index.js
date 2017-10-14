@@ -135,58 +135,53 @@ function createSqlUrls() {
   /* ================================================================== */
 
   var collection = 'pedido'
-
   var apiUrl = '/sql/' + collection;
-  console.log(apiUrl + ' apiUrl')
 
   // Adicionar Pedido
   app.post(apiUrl, function (req, res) {
-    var pedido = req.body;
-    exports.insertQuery(collection, pedido)
+    var pedido = req.body
+
+    database.insertQuery(collection, pedido)
     res.json(pedido);
   });
-  
+
   // Listar Pedidos
   app.get(apiUrl, function (req, res) {
-    exports.selectQuery(collection, function (results) {
+    database.selectAll(collection, function (results) {
       res.json(results);
     })
   });
 
   // Ler Pedido
   app.get(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    db.collection(collection).findOne(query, function (result) {
-      res.json(result);
-    });
+    var id = req.params.id
+
+    database.selectQuery(collection, id, function (results) {
+      res.json(results);
+    })
   });
 
   // Atualizar Pedido
   app.put(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    req.body._id = ObjectId(req.params.id);
-    var pedido = req.body;
+    var pedido = req.body
 
-    db.collection(collection).update(query, req.body,
-      {
-        "multi": false,  // update only one document 
-        "upsert": false  // insert a new document, if no existing document match the query 
-      }
-    );
-    res.json(pedido);
+    database.update(collection, pedido, function (results) {
+      res.json(results)
+    })
   });
 
   // Deletar Pedido
   app.delete(apiUrl + '/:id', function (req, res) {
-    var query = { "_id": ObjectId(req.params.id) };
-    db.collection(collection).deleteOne(query, function (err, obj) {
-      res.json(req.params.id);
-    });
+    var id = req.params.id
+
+    database.delete(collection, id, function (results) {
+      res.json(req.params.id)
+    })
   });
 }
 
-createApiUrls()
-createSqlUrls()
-
 var database = require('./server/ts/database.ts');
 database.start();
+
+createApiUrls()
+createSqlUrls()
