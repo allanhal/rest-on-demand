@@ -108,3 +108,54 @@ this.delete = function (table, id, onResult) {
             onResult(result);
         });
 }
+
+this.createApiSql = function () {
+    /* ================================================================== */
+    /* =========================== API REST ============================= */
+    /* ================================================================== */
+
+    var collection = 'pedido'
+    var apiUrl = '/sql/' + collection;
+
+    // Adicionar
+    app.post(apiUrl, function (req, res) {
+        var pedido = req.body
+
+        this.insertQuery(collection, pedido)
+        res.json(pedido);
+    });
+
+    // Listar Todos
+    app.get(apiUrl, function (req, res) {
+        this.selectAll(collection, function (results) {
+            res.json(results);
+        })
+    });
+
+    // Ler Um
+    app.get(apiUrl + '/:id', function (req, res) {
+        var id = req.params.id
+
+        this.selectQuery(collection, id, function (results) {
+            res.json(results);
+        })
+    });
+
+    // Atualizar
+    app.put(apiUrl + '/:id', function (req, res) {
+        var pedido = req.body
+
+        this.update(collection, pedido, function (results) {
+            res.json(results)
+        })
+    });
+
+    // Deletar
+    app.delete(apiUrl + '/:id', function (req, res) {
+        var id = req.params.id
+
+        this.delete(collection, id, function (results) {
+            res.json(req.params.id)
+        })
+    });
+}
