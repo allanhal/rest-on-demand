@@ -34,23 +34,26 @@ app.use('/', express.static('public'));
 
 MongoClient.connect(dbUrl, function (err, database) {
   if (err) {
-    return console.log(err);
+    return log(err);
   }
   db = database;
+  
+  apiAluno.create(app, db);
+
   app.listen(app.get('port'), function () {
     loadAllCollections();
-    console.log('');
-    console.log('Node app is running on port:');
-    console.log(app.get('port'));
-    console.log('');
+    log('');
+    log('Node app is running on port:');
+    log(app.get('port'));
+    log('');
   });
 });
 
 /* ================================================================== */
 /* ======================= CREATE COLLECTION ======================== */
 /* ================================================================== */
-app.get('/create/:id', function (req, res) {
-  var collectionToCreate = req.params.id
+app.get('/create/:col', function (req, res) {
+  var collectionToCreate = req.params.col
   db.createCollection(collectionToCreate, function (err, res) {
     if (err) throw err;
     loadAllCollections()
@@ -62,16 +65,16 @@ function loadAllCollections() {
   db.listCollections().toArray(function (err, collInfos) {
     var colls = [];
 
-    console.log('');
-    console.log('All MongoDB collections:');
+    log('');
+    log('All MongoDB collections:');
     for (var key in collInfos) {
       if (collInfos.hasOwnProperty(key)) {
         var element = collInfos[key];
-        console.log(element.name)
+        log(element.name)
         colls.push(element.name)
       }
     }
-    console.log('');
+    log('');
     collections = colls;
     createApiMongoForAllCollections()
   });
@@ -90,21 +93,21 @@ function createApiMongo(collection) {
 
   apiUrl = '/api/' + collection;
 
-  // Adicionar Pedido
+  // Adicionar
   app.post(apiUrl, function (req, res) {
     var pedido = req.body;
     db.collection(collection).insert(pedido);
     res.json(pedido);
   });
 
-  // Listar Pedidos
+  // Listar Todos
   app.get(apiUrl, function (req, res) {
     db.collection(collection).find().toArray(function (err, results) {
       res.json(results);
     });
   });
 
-  // Ler Pedido
+  // Ler Um
   app.get(apiUrl + '/:id', function (req, res) {
     var query = { "_id": ObjectId(req.params.id) };
     db.collection(collection).findOne(query, function (err, result) {
@@ -112,7 +115,7 @@ function createApiMongo(collection) {
     });
   });
 
-  // Atualizar Pedido
+  // Atualizar
   app.put(apiUrl + '/:id', function (req, res) {
     var query = { "_id": ObjectId(req.params.id) };
     req.body._id = ObjectId(req.params.id);
@@ -127,7 +130,7 @@ function createApiMongo(collection) {
     res.json(pedido);
   });
 
-  // Deletar Pedido
+  // Deletar
   app.delete(apiUrl + '/:id', function (req, res) {
     var query = { "_id": ObjectId(req.params.id) };
     db.collection(collection).deleteOne(query, function (err, obj) {
@@ -145,7 +148,7 @@ function createApiSql() {
   var collection = 'pedido'
   var apiUrl = '/sql/' + collection;
 
-  // Adicionar Pedido
+  // Adicionar
   app.post(apiUrl, function (req, res) {
     var pedido = req.body
 
@@ -153,14 +156,14 @@ function createApiSql() {
     res.json(pedido);
   });
 
-  // Listar Pedidos
+  // Listar Todos
   app.get(apiUrl, function (req, res) {
     database.selectAll(collection, function (results) {
       res.json(results);
     })
   });
 
-  // Ler Pedido
+  // Ler Um
   app.get(apiUrl + '/:id', function (req, res) {
     var id = req.params.id
 
@@ -169,7 +172,7 @@ function createApiSql() {
     })
   });
 
-  // Atualizar Pedido
+  // Atualizar
   app.put(apiUrl + '/:id', function (req, res) {
     var pedido = req.body
 
@@ -178,7 +181,7 @@ function createApiSql() {
     })
   });
 
-  // Deletar Pedido
+  // Deletar
   app.delete(apiUrl + '/:id', function (req, res) {
     var id = req.params.id
 
@@ -194,3 +197,15 @@ database.start();
 
 createApiMongoForAllCollections()
 createApiSql()
+
+var apiAluno = require('./server/ts/apiAluno.ts');
+
+
+
+const debug = false;
+function log(message) {
+  if (debug)
+    return console.log(message)
+
+  return false;
+}
