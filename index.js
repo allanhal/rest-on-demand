@@ -11,6 +11,7 @@ app.set('port', (process.env.PORT || 5000));
 
 app.use(compression())
 
+// app.use('/', express.static('public'));
 app.use(express.static(path.join(__dirname, 'dist')))
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies
@@ -23,15 +24,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', express.static('public'));
-
 
 var database = require('./server/ts/database.ts');
-database.start();
-database.createApiSql()
-
+database.start(app)
 
 var apisMongo = require('./server/ts/apisMongo.ts');
-apisMongo.createApiMongoForAllCollections(collections, collection)
-
-var apiAluno = require('./server/ts/apiAluno.ts');
+apisMongo.start(app)

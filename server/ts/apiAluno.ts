@@ -28,9 +28,4 @@ this.create = function (app, db) {
 
         });
     });
-
-    app.get('/api/aluno/:id/nota', function (req, res) {
-        console.log(req.params.id)
-        res.json(req.params.id);
-    });
 }

@@ -1,25 +1,27 @@
 const MongoClient = require('mongodb').MongoClient;
+var apiAluno = require('./apiAluno.ts');
 
 var collections = ['pedido', 'produto'];
 var db; // mongoDatabase
 var dbUrl = 'mongodb://user:user@ds123124.mlab.com:23124/easy-rest';
 
 
-this.start = function () {
+this.start = function (app) {
+    var that = this;
     MongoClient.connect(dbUrl, function (err, database) {
         if (err) {
-            return log(err);
+            return this.log(err);
         }
         db = database;
 
         apiAluno.create(app, db);
 
         app.listen(app.get('port'), function () {
-            apisMongo.loadAllCollections();
-            log('');
-            log('Node app is running on port:');
-            log(app.get('port'));
-            log('');
+            that.loadAllCollections(db);
+            that.log('');
+            that.log('Node app is running on port:');
+            that.log(app.get('port'));
+            that.log('');
         });
     });
 
@@ -36,7 +38,7 @@ this.start = function () {
     });
 }
 
-this.createApiMongoForAllCollections = function (collections, collection) {
+this.createApiMongoForAllCollections = function (collections) {
     collections.forEach(function (collection) {
         this.createApiMongo(collection)
     }, this);
@@ -97,21 +99,22 @@ this.createApiMongo = function createApiMongo(db, collection) {
 }
 
 this.loadAllCollections = function (db) {
+    var that = this;
     db.listCollections().toArray(function (err, collInfos) {
         var colls = [];
 
-        this.log('');
-        this.log('All MongoDB collections:');
+        that.log('');
+        that.log('All MongoDB collections:');
         for (var key in collInfos) {
             if (collInfos.hasOwnProperty(key)) {
                 var element = collInfos[key];
-                this.log(element.name)
+                that.log(element.name)
                 colls.push(element.name)
             }
         }
-        this.log('');
+        that.log('');
         collections = colls;
-        this.createApiMongoForAllCollections(collections, collection)
+        that.createApiMongoForAllCollections(collections)
     });
 }
 

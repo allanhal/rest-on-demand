@@ -1,6 +1,6 @@
 var knex;
 
-this.start = function () {
+this.start = function (app) {
     this.connectDatabase()
     this.createTables('pedido')
 
@@ -22,6 +22,8 @@ this.start = function () {
     // this.selectAll('pedido', function (results) {
     //     console.log(results);
     // })
+
+    this.createApiSql(app)
 }
 
 this.connectDatabase = function () {
@@ -109,7 +111,7 @@ this.delete = function (table, id, onResult) {
         });
 }
 
-this.createApiSql = function () {
+this.createApiSql = function (app) {
     /* ================================================================== */
     /* =========================== API REST ============================= */
     /* ================================================================== */
