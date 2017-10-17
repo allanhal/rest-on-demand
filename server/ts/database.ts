@@ -2,7 +2,8 @@ var knex;
 
 this.start = function () {
     this.connectDatabase()
-    this.createTables('pedido')
+
+    // this.createTables('pedido') 
 
     // this.insertQuery('pedido', {
     //     nome: "Cliente 3",
@@ -19,7 +20,7 @@ this.start = function () {
     //     tempo: "3 dias"
     // })
 
-    // this.selectAll('pedido', function (results) {
+    // this.selectAll('usuarios', function (results) {
     //     console.log(results);
     // })
 }
@@ -71,6 +72,7 @@ this.createTables = function (table) {
 }
 
 this.insertQuery = function (table, json) {
+
     knex(table).insert(json).
         then(function (values) {
             console.log(values);
@@ -84,16 +86,34 @@ this.selectAll = function (table, onResult) {
 }
 
 this.selectQuery = function (table, id, onResult) {
-    knex(table).where('_id', id).then(function (result) {
+    knex(table).where('idusuarios', id).then(function (result) {
         onResult(result);
     });
 }
 
-this.update = function (table, pedido, onResult) {
-    var id = pedido.id;
+this.selectQueryIdNome = function (table, id, nome, onResult) {
+    knex(table).where({
+        'idusuarios': id,
+        'Nome': nome
+    }).then(function (result) {
+        onResult(result);
+    });
+}
 
+this.update = function (table, id, pedido, onResult) {
     knex(table)
-        .where('_id', id)
+        .where('idusuarios', id)
+        .update(pedido)
+        .then(function (result) {
+            onResult(result);
+        });
+}
+this.update = function (table, id, nome, pedido, onResult) {
+    knex(table)
+        .where({
+            'idusuarios': id,
+            'Nome': nome
+        })
         .update(pedido)
         .then(function (result) {
             onResult(result);
@@ -102,9 +122,23 @@ this.update = function (table, pedido, onResult) {
 
 this.delete = function (table, id, onResult) {
     knex(table)
-        .where('_id', id)
+        .where('idusuarios', id)
         .del()
         .then(function (result) {
             onResult(result);
         });
+}
+
+this.joined = function (table, join, onResult) {
+
+    knex.select('*').from(table).leftOuterJoin(join, table + '.idusuarios', join + '.idusuarios')
+        .then(function (result) {
+            onResult(result);
+        });
+
+    // knex(table)
+    // .leftOuterJoin(join, table + '.idusuarios', '=', join + '.idusuarios')
+    // .then(function (result) {
+    //     onResult(result);
+    // });
 }

@@ -37,7 +37,7 @@ MongoClient.connect(dbUrl, function (err, database) {
     return log(err);
   }
   db = database;
-  
+
   apiAluno.create(app, db);
 
   app.listen(app.get('port'), function () {
@@ -140,21 +140,25 @@ function createApiMongo(collection) {
 
 }
 
+
 function createApiSql() {
   /* ================================================================== */
   /* =========================== API REST ============================= */
   /* ================================================================== */
 
-  var collection = 'pedido'
+  var collection = 'usuarios'
   var apiUrl = '/sql/' + collection;
 
   // Adicionar
   app.post(apiUrl, function (req, res) {
     var pedido = req.body
-
+    delete pedido.idusuarios;
     database.insertQuery(collection, pedido)
     res.json(pedido);
   });
+
+
+
 
   // Listar Todos
   app.get(apiUrl, function (req, res) {
@@ -167,16 +171,22 @@ function createApiSql() {
   app.get(apiUrl + '/:id', function (req, res) {
     var id = req.params.id
 
-    database.selectQuery(collection, id, function (results) {
-      res.json(results);
+    database.selectQuery(collection, id, function (resultsUsuario) {
+      resultsUsuario.forEach(function (element) {
+        database.selectQuery(collection1, id, function (resultsTelas) {
+          element.telas = resultsTelas;
+          res.json(element);
+        })
+      }, this);
     })
   });
 
   // Atualizar
   app.put(apiUrl + '/:id', function (req, res) {
+    var idToSearch = req.body.idusuarios
     var pedido = req.body
-
-    database.update(collection, pedido, function (results) {
+    delete pedido.idusuarios;
+    database.update(collection, idToSearch, pedido, function (results) {
       res.json(results)
     })
   });
@@ -186,6 +196,64 @@ function createApiSql() {
     var id = req.params.id
 
     database.delete(collection, id, function (results) {
+      res.json(req.params.id)
+    })
+  });
+
+  var collection1 = 'telas'
+  var apiUrl1 = '/sql/' + collection1;
+
+  // Adicionar
+  app.post(apiUrl1, function (req, res) {
+    var pedido = req.body
+    delete pedido.idusuarios;
+    database.insertQuery(collection1, pedido)
+    res.json(pedido);
+  });
+
+  // Listar Todos
+  app.get(apiUrl1, function (req, res) {
+    database.selectAll(collection1, function (results) {
+      res.json(results);
+    })
+  });
+
+  // Ler Um
+  app.get(apiUrl1 + '/:id', function (req, res) {
+    var id = req.params.id
+
+    database.selectQuery(collection1, id, function (results) {
+      res.json(results);
+    })
+  });
+
+  // Atualizar
+  app.put(apiUrl1 + '/:id', function (req, res) {
+    var idToSearch = req.body.idusuarios
+    var nomeToSearch = req.body.Nome
+    var pedido = req.body
+    delete pedido.idusuarios;
+    delete pedido.nome;
+
+
+    database.selectQueryIdNome(collection1, idToSearch, nomeToSearch, function (results) {
+      if (results.length > 0) {
+        database.updateIdNome(collection1, idToSearch, nomeToSearch, req.body, function (results) {
+          res.json(results)
+        })
+      } else {
+        var pedido = req.body
+        database.insertQuery(collection1, req.body)
+        res.json(req.body);
+      }
+    })
+  });
+
+  // Deletar
+  app.delete(apiUrl1 + '/:id', function (req, res) {
+    var id = req.params.id
+
+    database.delete(collection1, id, function (results) {
       res.json(req.params.id)
     })
   });
