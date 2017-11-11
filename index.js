@@ -243,7 +243,11 @@ function createApiSql() {
         })
       } else {
         var pedido = req.body
-        database.insertQuery(collection1, req.body)
+        database.insertQuery(collection1, {
+          idusuarios: idToSearch,
+          Nome: nomeToSearch,
+          tipo: req.body.tipo
+        })
         res.json(req.body);
       }
     })
@@ -277,3 +281,14 @@ function log(message) {
 
   return false;
 }
+
+app.get('/api', function (req, res) {
+  db.listCollections().toArray(function (err, colInfos) {
+    let cols = [];
+
+    colInfos.forEach(col => {
+      cols.push(col.name)
+    })
+    res.send(cols)
+  });
+});

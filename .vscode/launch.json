@@ -9,15 +9,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-<<<<<<< HEAD
             "program": "${workspaceFolder}/index.js",
             "outFiles": [
                 "${workspaceRoot}/compiled/**/*.js"
             ],
             "sourceMaps": true
-=======
-            "program": "${workspaceFolder}/index.js"
->>>>>>> eb889862d0398c0a20e335337a125ad372631550
         }
     ]
 }
